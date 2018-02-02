@@ -33,7 +33,8 @@
     "coverage:remap": "remap-istanbul -i coverage/coverage.json -o coverage/coverage.json -t json -e node_modules,karma.entry.ts",
     "coverage:report": "istanbul report",
     "prepublish": "npm run build && npm test",
-    "report-coverage": "codecov -f coverage/coverage.json"
+    "report-coverage": "codecov -f coverage/coverage.json",
+    "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "pre-commit": [
     "lint"
@@ -51,6 +52,10 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.3.11",
+    "@storybook/addon-notes": "^3.3.11",
+    "@storybook/addon-options": "^3.3.11",
+    "@storybook/react": "^3.3.11",
     "@types/chosen-js": "1.6.1",
     "@types/classnames": "2.2.3",
     "@types/enzyme": "2.8.7",
@@ -65,10 +70,13 @@
     "@types/react-redux": "5.0.8",
     "@types/react-tether": "0.5.2",
     "@types/react-transition-group": "2.0.6",
+    "@types/storybook__addon-actions": "^3.0.1",
+    "@types/storybook__react": "^3.0.6",
     "@types/underscore": "1.8.3",
     "@types/underscore.string": "0.0.31",
     "@types/webpack-env": "1.13.2",
     "autoprefixer": "7.1.6",
+    "babel-core": "^6.26.0",
     "bithound": "1.7.0",
     "chosen-js": "1.8.2",
     "classnames": "2.2.5",
