@@ -34,7 +34,8 @@
     "coverage:report": "istanbul report",
     "prepublish": "npm run build && npm test",
     "report-coverage": "codecov -f coverage/coverage.json",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "storybook-build": "build-storybook -c .storybook -o .out"
   },
   "pre-commit": [
     "lint"
@@ -53,7 +54,8 @@
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.3.11",
-    "@storybook/addon-notes": "^3.3.11",
+    "@storybook/addon-info": "^3.3.11",
+    "@storybook/addon-knobs": "^3.3.11",
     "@storybook/addon-options": "^3.3.11",
     "@storybook/react": "^3.3.11",
     "@types/chosen-js": "1.6.1",
@@ -71,6 +73,8 @@
     "@types/react-tether": "0.5.2",
     "@types/react-transition-group": "2.0.6",
     "@types/storybook__addon-actions": "^3.0.1",
+    "@types/storybook__addon-info": "^3.2.1",
+    "@types/storybook__addon-knobs": "^3.2.2",
     "@types/storybook__react": "^3.0.6",
     "@types/underscore": "1.8.3",
     "@types/underscore.string": "0.0.31",

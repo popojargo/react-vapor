@@ -5,6 +5,10 @@ import * as $ from 'jquery';
 import '../docs/style.scss';
 import 'coveo-styleguide/dist/css/CoveoStyleGuide.css';
 import {storiesOf, addDecorator} from '@storybook/react';
+import {withKnobs} from '@storybook/addon-knobs';
+import { setDefaults } from '@storybook/addon-info';
+
+// Components
 import {UserFeedbackExample} from '../src/components/userFeedback/examples/UserFeedbackExample';
 import {SyncFeedbackExample} from '../src/components/syncFeedback/examples/SyncFeedbackExample';
 import {MembersExample} from '../docs/members-example/MembersExample';
@@ -80,6 +84,14 @@ addDecorator(story => (
     <div className='coveo-form m4'>{story()}</div>
   </Provider>
 ));
+
+addDecorator(withKnobs);
+
+// addon-info
+setDefaults({
+  header: false,
+  inline: true,
+});
 
 // Basic React Vapor stories
 const componentGroups: any = {
