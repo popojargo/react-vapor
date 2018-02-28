@@ -1,9 +1,11 @@
+import {TableActions} from './../tables/TableActions';
 import * as _ from 'underscore';
-import { IReduxActionsPayload } from '../../ReactVapor';
-import { IReduxAction } from '../../utils/ReduxUtils';
-import { LoadingActions } from '../loading/LoadingActions';
-import { IActionOptions } from './Action';
-import { ActionBarActions } from './ActionBarActions';
+import * as s from 'underscore.string';
+import {IReduxActionsPayload} from '../../ReactVapor';
+import {IReduxAction} from '../../utils/ReduxUtils';
+import {LoadingActions} from '../loading/LoadingActions';
+import {IActionOptions} from './Action';
+import {ActionBarActions} from './ActionBarActions';
 
 export interface IActionBarState {
   id: string;
@@ -11,7 +13,7 @@ export interface IActionBarState {
   isLoading?: boolean;
 }
 
-export const actionBarInitialState: IActionBarState = { id: undefined, actions: [] };
+export const actionBarInitialState: IActionBarState = {id: undefined, actions: []};
 export const actionBarsInitialState: IActionBarState[] = [];
 
 export const actionBarReducer = (state: IActionBarState = actionBarInitialState, action: IReduxAction<IReduxActionsPayload>): IActionBarState => {
@@ -19,7 +21,7 @@ export const actionBarReducer = (state: IActionBarState = actionBarInitialState,
     case ActionBarActions.addActions:
       return state.id !== action.payload.id
         ? state
-        : { ...state, actions: action.payload.actions };
+        : {...state, actions: action.payload.actions};
     case ActionBarActions.add:
       return {
         id: action.payload.id,
@@ -28,11 +30,15 @@ export const actionBarReducer = (state: IActionBarState = actionBarInitialState,
       };
     case LoadingActions.turnOn:
       return _.contains(action.payload.ids, state.id)
-        ? { ...state, isLoading: true }
+        ? {...state, isLoading: true}
         : state;
     case LoadingActions.turnOff:
       return _.contains(action.payload.ids, state.id)
-        ? { ...state, isLoading: false }
+        ? {...state, isLoading: false}
+        : state;
+    case TableActions.modifyState:
+      return s.contains(state.id, action.payload.id)
+        ? {...state, actions: []}
         : state;
     default:
       return state;
@@ -44,6 +50,7 @@ export const actionBarsReducer = (state: IActionBarState[] = actionBarsInitialSt
     case ActionBarActions.addActions:
     case LoadingActions.turnOn:
     case LoadingActions.turnOff:
+    case TableActions.modifyState:
       return state.map((bar) =>
         actionBarReducer(bar, action),
       );

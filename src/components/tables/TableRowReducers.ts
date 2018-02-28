@@ -1,6 +1,8 @@
+import { TableActions } from './TableActions';
 import * as _ from 'underscore';
-import { IReduxAction } from '../../utils/ReduxUtils';
-import { ITableRowActionPayload, TableRowActions } from './TableRowActions';
+import * as s from 'underscore.string';
+import {IReduxAction} from '../../utils/ReduxUtils';
+import {ITableRowActionPayload, TableRowActions} from './TableRowActions';
 
 export interface ITableRowState {
   id: string;
@@ -9,7 +11,7 @@ export interface ITableRowState {
   tableId?: string;
 }
 
-export const tableRowInitialState: ITableRowState = { id: undefined, opened: undefined, selected: undefined };
+export const tableRowInitialState: ITableRowState = {id: undefined, opened: undefined, selected: undefined};
 export const tableRowsInitialState: ITableRowState[] = [];
 
 export const tableRowReducer = (state: ITableRowState = tableRowInitialState, action: IReduxAction<ITableRowActionPayload>): ITableRowState => {
@@ -24,13 +26,17 @@ export const tableRowReducer = (state: ITableRowState = tableRowInitialState, ac
     case TableRowActions.select:
       if (state.tableId === action.payload.tableId) {
         return state.id === action.payload.id
-          ? { ...state, selected: true, opened: !!action.payload.isCollapsible && !state.opened }
-          : { ...state, selected: false, opened: false };
+          ? {...state, selected: true, opened: !!action.payload.isCollapsible && !state.opened}
+          : {...state, selected: false, opened: false};
       }
     case TableRowActions.unselectAll:
       if (state.tableId === action.payload.tableId) {
-        return { ...state, selected: false, opened: false };
+        return {...state, selected: false, opened: false};
       }
+    case TableActions.modifyState:
+      return state.tableId === action.payload.id
+        ? {...state, opened: false, selected: false}
+        : state;
     default:
       return state;
   }
@@ -49,6 +55,7 @@ export const tableRowsReducer = (state: ITableRowState[] = tableRowsInitialState
       });
     case TableRowActions.select:
     case TableRowActions.unselectAll:
+    case TableActions.modifyState:
       return state.map((row: ITableRowState) => tableRowReducer(row, action));
     default:
       return state;

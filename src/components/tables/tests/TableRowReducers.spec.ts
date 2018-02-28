@@ -1,5 +1,7 @@
-import { IReduxAction } from '../../../utils/ReduxUtils';
-import { ITableRowActionPayload, TableRowActions, unselectAllRows } from '../TableRowActions';
+import * as _ from 'underscore';
+import {modifyState} from './../TableActions';
+import {IReduxAction} from '../../../utils/ReduxUtils';
+import {ITableRowActionPayload, TableRowActions, unselectAllRows} from '../TableRowActions';
 import {
   ITableRowState,
   tableRowInitialState,
@@ -107,9 +109,9 @@ describe('Tables', () => {
       beforeEach(() => {
         openValue = false;
         oldState = [
-          { id: 'row2', opened: openValue, selected: false },
-          { id: 'row3', opened: openValue, selected: false },
-          { id: 'row1', opened: openValue, selected: false },
+          {id: 'row2', opened: openValue, selected: false},
+          {id: 'row3', opened: openValue, selected: false},
+          {id: 'row1', opened: openValue, selected: false},
         ];
       });
 
@@ -175,16 +177,16 @@ describe('Tables', () => {
       describe('selected behavior', () => {
         const actionMaker = (rowId: string): IReduxAction<ITableRowActionPayload> => ({
           type: TableRowActions.select,
-          payload: { id: rowId },
+          payload: {id: rowId},
         });
         const doesNotMatter = false;
 
         beforeEach(() => {
           openValue = false;
           oldState = [
-            { id: 'row2', opened: doesNotMatter, selected: false },
-            { id: 'row3', opened: doesNotMatter, selected: false },
-            { id: 'row1', opened: doesNotMatter, selected: false },
+            {id: 'row2', opened: doesNotMatter, selected: false},
+            {id: 'row3', opened: doesNotMatter, selected: false},
+            {id: 'row1', opened: doesNotMatter, selected: false},
           ];
         });
 
@@ -220,7 +222,7 @@ describe('Tables', () => {
           const tableId = 'tableId';
           const action = unselectAllRows(tableId);
 
-          const currentStateWithTableId = oldState.map((rowState) => ({ ...rowState, tableId, selected: true }));
+          const currentStateWithTableId = oldState.map((rowState) => ({...rowState, tableId, selected: true}));
 
           expect(tableRowsReducer(currentStateWithTableId, action).every((row) => !row.selected)).toBe(true);
         });
@@ -229,9 +231,29 @@ describe('Tables', () => {
           const tableId = 'tableId';
           const action = unselectAllRows(tableId);
 
-          const currentStateWithTableId = oldState.map((rowState) => ({ ...rowState, tableId: `different${tableId}`, selected: true }));
+          const currentStateWithTableId = oldState.map((rowState) => ({...rowState, tableId: `different${tableId}`, selected: true}));
 
           expect(tableRowsReducer(currentStateWithTableId, action).every((row) => row.selected)).toBe(true);
+        });
+
+        it('should modify rows having a table id identical to the one received in the payload onModifyState, and leave other rows unchanged', () => {
+          const tableId = 'table-id';
+          oldState = [
+            {id: 'row2', opened: true, selected: true},
+            {id: 'row3', opened: true, selected: true},
+            {id: 'row1', opened: true, selected: true},
+            {tableId, id: 'row4-table-id', opened: true, selected: true},
+          ];
+
+          tableRowsReducer(oldState, modifyState('table-id', _.identity, false))
+            .forEach((row, index) => {
+              if (row.tableId === tableId) {
+                expect(row.selected).toBe(false);
+                expect(row.opened).toBe(false);
+              } else {
+                expect(row).toBe(oldState[index]);
+              }
+            });
         });
       });
     });

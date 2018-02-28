@@ -1,3 +1,4 @@
+import { modifyState } from './../../tables/TableActions';
 import * as _ from 'underscore';
 import { IReduxAction } from '../../../utils/ReduxUtils';
 import { turnOffLoading, turnOnLoading } from '../../loading/LoadingActions';
@@ -148,6 +149,34 @@ describe('Actions', () => {
         expect(_.findWhere(actionBarsState, { id: oldState[2].id }).isLoading).toBe(false);
         expect(actionBarsState.filter(((actionBar) => actionBar.id !== oldState[2].id)))
           .toEqual(oldState.filter(((actionBar) => actionBar.id !== oldState[2].id)));
+      });
+
+      it('should reset the actions in the action bar related to a table when the latter has its state modified', () => {
+        const stateWithActions: IActionBarState[] = [
+          {
+            id: 'related-table-action-bar',
+            actions: [
+              { enabled: true },
+            ]
+          },
+        ]
+        const newState = actionBarsReducer(stateWithActions, modifyState('related-table', _.identity, true));
+
+        expect(_.findWhere(newState, { id: stateWithActions[0].id }).actions).toEqual([]);
+      });
+
+      it('should not reset the actions in the action bar that is not related to the table being modified', () => {
+        const stateWithActions: IActionBarState[] = [
+          {
+            id: 'some-action-bar',
+            actions: [
+              { enabled: true },
+            ]
+          },
+        ]
+        const newState = actionBarsReducer(stateWithActions, modifyState('unrelated-table', _.identity, true));
+
+        expect(_.findWhere(newState, { id: stateWithActions[0].id }).actions).toEqual(stateWithActions[0].actions);
       });
     });
   });
