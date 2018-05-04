@@ -4,7 +4,7 @@ module.exports = (config) => {
     config.set({
         frameworks: ['jasmine', 'source-map-support'],
 
-        files: ['./karma.entry.ts'],
+        files: ['node_modules/babel-polyfill/dist/polyfill.js', './karma.entry.ts'],
 
         preprocessors: {
             './karma.entry.ts': ['webpack'],

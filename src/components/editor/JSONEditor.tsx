@@ -1,8 +1,9 @@
 import 'codemirror/mode/javascript/javascript';
 
 import * as classNames from 'classnames';
+import * as codemirror from 'codemirror';
 import * as React from 'react';
-import * as ReactCodeMirror from 'react-codemirror';
+import {IInstance, UnControlled as ReactCodeMirror} from 'react-codemirror2';
 import * as _ from 'underscore';
 
 import {Svg} from '../svg/Svg';
@@ -25,7 +26,7 @@ export class JSONEditor extends React.Component<IJSONEditorProps, IJSONEditorSta
     static defaultProps: Partial<IJSONEditorProps> = {
         errorMessage: DEFAULT_JSON_ERROR_MESSAGE,
     };
-    static Options: CodeMirror.EditorConfiguration = {
+    static Options: codemirror.EditorConfiguration = {
         mode: CodeMirrorModes.JSON,
         lineNumbers: true,
         foldGutter: true,
@@ -37,7 +38,7 @@ export class JSONEditor extends React.Component<IJSONEditorProps, IJSONEditorSta
         ],
     };
 
-    private codemirror: ReactCodeMirror.ReactCodeMirror;
+    // private codemirror: ReactCodeMirror;
 
     constructor(props: IJSONEditorProps, state: IJSONEditorState) {
         super(props, state);
@@ -46,12 +47,12 @@ export class JSONEditor extends React.Component<IJSONEditorProps, IJSONEditorSta
         };
     }
 
-    componentDidUpdate(prevProps: IJSONEditorProps) {
-        if (prevProps.value !== this.props.value) {
-            this.codemirror.getCodeMirror().setValue(this.props.value);
-            this.codemirror.getCodeMirror().getDoc().clearHistory();
-        }
-    }
+    // componentDidUpdate(prevProps: IJSONEditorProps) {
+    //     if (prevProps.value !== this.props.value) {
+    //         this.codemirror.getEditor().setValue(this.props.value);
+    //         this.codemirror.getEditor().getDoc().clearHistory();
+    //     }
+    // }
 
     render() {
         const classes: string = classNames(
@@ -63,9 +64,9 @@ export class JSONEditor extends React.Component<IJSONEditorProps, IJSONEditorSta
         return (
             <div className={classes}>
                 <ReactCodeMirror
-                    ref={(codemirror: ReactCodeMirror.ReactCodeMirror) => this.codemirror = codemirror}
+                    // ref={(codemirror: ReactCodeMirror) => this.codemirror = codemirror}
                     value={this.props.value}
-                    onChange={(json: string) => this.handleChange(json)}
+                    onChange={(editor: IInstance, data: codemirror.EditorChange, json: string) => this.handleChange(json)}
                     options={_.extend({}, JSONEditor.Options, {readOnly: this.props.readOnly})}
                 />
                 {this.getValidationDetails()}
