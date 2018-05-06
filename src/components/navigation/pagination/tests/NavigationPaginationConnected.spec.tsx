@@ -24,7 +24,7 @@ describe('<NavigationPaginationConnected />', () => {
     const basicNavigationPaginationProps: INavigationPaginationProps = {
         totalPages: 20,
         id: ID,
-        loadingIds: [loadingId]
+        loadingIds: [loadingId],
     };
 
     const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {

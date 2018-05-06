@@ -24,7 +24,7 @@ describe('<NavigationPerPageConnected />', () => {
     const basicNavigationPerPageProps: INavigationPerPageProps = {
         totalEntries: 55,
         id: ID,
-        loadingIds: [loadingId]
+        loadingIds: [loadingId],
     };
 
     const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
@@ -34,7 +34,7 @@ describe('<NavigationPerPageConnected />', () => {
     const mountWithProps = (props?) => {
         store.dispatch(addLoading(loadingId));
         store.dispatch(turnOffLoading([loadingId]));
-        
+
         wrapper = mount(
             <Provider store={store}>
                 <div>
@@ -43,11 +43,11 @@ describe('<NavigationPerPageConnected />', () => {
             </Provider>,
             {attachTo: document.getElementById('App')},
         );
-        
+
         dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
         refreshWrapperWhenDone(wrapper);
     };
-    
+
     beforeEach(() => {
         store = TestUtils.buildStore();
         mountWithProps();
