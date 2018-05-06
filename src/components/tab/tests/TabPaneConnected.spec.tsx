@@ -4,7 +4,7 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux';
 import {IReactVaporState} from '../../../ReactVapor';
-import {clearState} from '../../../utils/ReduxUtils';
+import {clearState, IReduxAction} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
 import {addTab} from '../TabActions';
 import {ITabPaneProps, TabPane} from '../TabPane';
@@ -16,6 +16,11 @@ describe('TabPane', () => {
         let id: string;
         let wrapper: ReactWrapper<any, any>;
         let store: Store<IReactVaporState>;
+        let dispatchAction: (action: IReduxAction<any>) => void;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            tabPane = wrapper.find(TabPane).first();
+        });
 
         beforeEach(() => {
             id = 'tab';
@@ -30,7 +35,9 @@ describe('TabPane', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            tabPane = wrapper.find(TabPane).first();
+
+            dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -54,15 +61,15 @@ describe('TabPane', () => {
         });
 
         it('should set the tab pane as active when adding a tab with same ID and no other tab is in the store', () => {
-            store.dispatch(addTab(id));
+            dispatchAction(addTab(id));
             const isActive = tabPane.props().isActive;
 
             expect(isActive).toBe(true);
         });
 
         it('should not set the tab pane as active when adding a tab with same ID and another tab is in the store', () => {
-            store.dispatch(addTab('tab-id-2'));
-            store.dispatch(addTab(id));
+            dispatchAction(addTab('tab-id-2'));
+            dispatchAction(addTab(id));
             const isActive = tabPane.props().isActive;
 
             expect(isActive).toBe(false);

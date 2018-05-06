@@ -1,8 +1,7 @@
 import {mount, ReactWrapper} from 'enzyme';
-// tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
-import {Store} from 'react-redux';
-import {Provider} from 'react-redux';
+import {Provider, Store} from 'react-redux';
+
 import {IReactVaporState} from '../../../ReactVapor';
 import {clearState} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
@@ -10,6 +9,7 @@ import {ITableCollapsibleRowProps, TableCollapsibleRow} from '../TableCollapsibl
 import {TableCollapsibleRowConnected} from '../TableCollapsibleRowConnected';
 import {addRow} from '../TableRowActions';
 
+// tslint:disable-next-line:no-unused-variable
 describe('Tables', () => {
 
     describe('<TableCollapsibleRowConnected />', () => {
@@ -17,6 +17,10 @@ describe('Tables', () => {
         let tableCollapsibleRow: ReactWrapper<ITableCollapsibleRowProps, any>;
         let basicTableCollapsibleRowProps: ITableCollapsibleRowProps;
         let store: Store<IReactVaporState>;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            tableCollapsibleRow = wrapper.find(TableCollapsibleRow).first();
+        });
 
         beforeEach(() => {
             basicTableCollapsibleRowProps = {
@@ -44,8 +48,8 @@ describe('Tables', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            tableCollapsibleRow = wrapper.find(TableCollapsibleRow).first();
-            store.dispatch(addRow(basicTableCollapsibleRowProps.id));
+
+            refreshWrapperWhenDone(wrapper, () => store.dispatch(addRow(basicTableCollapsibleRowProps.id)));
         });
 
         afterEach(() => {

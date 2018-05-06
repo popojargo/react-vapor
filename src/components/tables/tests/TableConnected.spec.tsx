@@ -1,4 +1,4 @@
-import {mount} from 'enzyme';
+import {mount, ReactWrapper} from 'enzyme';
 import * as React from 'react';
 import {Provider, Store} from 'react-redux';
 import * as _ from 'underscore';
@@ -58,7 +58,13 @@ describe('<TableConnected />', () => {
     describe('after render', () => {
         it('should add as many actions as there are dispatched table actions on onRowClick', () => {
             const wrapper = mountComponentWithProps({...tablePropsMock, actionBar: true});
-            const tableConnected = wrapper.find(Table);
+            let tableConnected: ReactWrapper<ITableProps, any>;
+
+            const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+                tableConnected = wrapper.find(Table);
+            });
+
+            refreshWrapperWhenDone(wrapper);
 
             const actions = [
                 {
@@ -76,7 +82,9 @@ describe('<TableConnected />', () => {
             ];
 
             expect(wrapper.find(PrimaryAction).length).toBe(0);
-            tableConnected.props().onRowClick(actions);
+
+            refreshWrapperWhenDone(wrapper, () => tableConnected.props().onRowClick(actions));
+
             expect(wrapper.find(PrimaryAction).length).toBe(actions.length);
         });
 

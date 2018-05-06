@@ -1,9 +1,9 @@
 import {mount, ReactWrapper} from 'enzyme';
-// tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux';
 import * as _ from 'underscore';
+
 import {IReactVaporState} from '../../../ReactVapor';
 import {clearState} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
@@ -24,18 +24,20 @@ describe('<NavigationConnected />', () => {
     let wrapper: ReactWrapper<any, any>;
     let navigation: ReactWrapper<INavigationProps, any>;
 
+    const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+        navigation = reactWrapper.find(Navigation).first();
+    });
+
     beforeEach(() => {
         store = TestUtils.buildStore();
 
         wrapper = mount(
             <Provider store={store}>
-                <div>
-                    <NavigationConnected {...basicNavigationProps} />
-                </div>
+                <NavigationConnected {...basicNavigationProps} />
             </Provider>,
             {attachTo: document.getElementById('App')},
         );
-        navigation = wrapper.find(Navigation).first();
+        refreshWrapperWhenDone(wrapper);
     });
 
     afterEach(() => {
@@ -78,6 +80,7 @@ describe('<NavigationConnected />', () => {
             .toBe(6);
 
         navigation.find('NavigationPerPageSelect').last().simulate('click');
+        refreshWrapperWhenDone(wrapper);
 
         expect(_.findWhere(store.getState().paginationComposite, {id: `pagination-${basicNavigationProps.id}`}).pageNb)
             .toBe(0);

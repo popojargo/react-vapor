@@ -5,7 +5,7 @@ import {Store} from 'react-redux';
 import {Provider} from 'react-redux';
 import * as _ from 'underscore';
 import {IReactVaporState} from '../../../ReactVapor';
-import {clearState} from '../../../utils/ReduxUtils';
+import {clearState, IReduxAction} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
 import {IOptionsCycleProps, OptionsCycle} from '../OptionsCycle';
 import {changeOptionsCycle} from '../OptionsCycleActions';
@@ -22,6 +22,11 @@ describe('Options cycle', () => {
         let wrapper: ReactWrapper<any, any>;
         let optionsCycle: ReactWrapper<IOptionsCycleProps, any>;
         let store: Store<IReactVaporState>;
+        let dispatchAction: (action: IReduxAction<any>) => void;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+            optionsCycle = reactWrapper.find(OptionsCycle).first();
+        });
 
         beforeEach(() => {
             store = TestUtils.buildStore();
@@ -32,7 +37,8 @@ describe('Options cycle', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            optionsCycle = wrapper.find(OptionsCycle).first();
+            dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -83,7 +89,7 @@ describe('Options cycle', () => {
         it('should return  the currentOption from the state when the options cycle exists in the state', () => {
             const expectedCurrentOption = 5;
 
-            store.dispatch(changeOptionsCycle(optionsCycleBasicProps.id, expectedCurrentOption));
+            dispatchAction(changeOptionsCycle(optionsCycleBasicProps.id, expectedCurrentOption));
 
             expect(optionsCycle.props().currentOption).toBe(expectedCurrentOption);
         });

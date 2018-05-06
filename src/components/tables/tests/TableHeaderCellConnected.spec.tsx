@@ -16,6 +16,10 @@ describe('Tables', () => {
         let basicTableHeaderCellConnectedProps;
         let tableHeaderCell: ReactWrapper<ITableHeaderCellProps, any>;
 
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            tableHeaderCell = wrapper.find(TableHeaderCell).first();
+        });
+
         beforeEach(() => {
             basicTableHeaderCellConnectedProps = {
                 title: 'awesome attribute title',
@@ -39,7 +43,8 @@ describe('Tables', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            tableHeaderCell = wrapper.find(TableHeaderCell).first();
+
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -74,27 +79,32 @@ describe('Tables', () => {
         });
 
         it('should change the sorted attribute to ASCENDING after one click', () => {
-            tableHeaderCell.simulate('click');
+            refreshWrapperWhenDone(wrapper, () => tableHeaderCell.simulate('click'));
+
             expect(tableHeaderCell.props().sorted).toBe(TableSortingOrder.ASCENDING);
         });
 
         it('should change the sorted attribute to DESCENDING after two clicks', () => {
-            tableHeaderCell.simulate('click').simulate('click');
+            refreshWrapperWhenDone(wrapper, () => tableHeaderCell.simulate('click').simulate('click'));
+
             expect(tableHeaderCell.props().sorted).toBe(TableSortingOrder.DESCENDING);
         });
 
         it('should change the sorted attribute to ASCENDING after three clicks', () => {
-            tableHeaderCell.simulate('click').simulate('click').simulate('click');
+            refreshWrapperWhenDone(wrapper, () => tableHeaderCell.simulate('click').simulate('click').simulate('click'));
+
             expect(tableHeaderCell.props().sorted).toBe(TableSortingOrder.ASCENDING);
         });
 
         it('should sort the clicked header cell and unsort the others with the same tableId', () => {
-            const tableHeaderCell2 = wrapper.find(TableHeaderCell).last();
+            let tableHeaderCell2 = wrapper.find(TableHeaderCell).last();
 
-            tableHeaderCell.simulate('click');
+            refreshWrapperWhenDone(wrapper, () => tableHeaderCell.simulate('click'));
             expect(tableHeaderCell.props().sorted).toBe(TableSortingOrder.ASCENDING);
 
-            tableHeaderCell2.simulate('click');
+            refreshWrapperWhenDone(wrapper, () => tableHeaderCell2.simulate('click'));
+            tableHeaderCell2 = wrapper.find(TableHeaderCell).last();
+
             expect(tableHeaderCell.props().sorted).toBe(TableSortingOrder.UNSORTED);
             expect(tableHeaderCell2.props().sorted).toBe(TableSortingOrder.ASCENDING);
         });

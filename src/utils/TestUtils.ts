@@ -1,6 +1,7 @@
+import {ReactWrapper} from 'enzyme';
 import * as Redux from 'redux';
 import thunk from 'redux-thunk';
-import {textAreasReducer} from '../components/textarea/TextAreaReducers';
+import {noop} from 'underscore';
 
 import {actionBarsReducer} from '../components/actions/ActionBarReducers';
 import {itemFiltersReducer} from '../components/actions/filters/ItemFilterReducers';
@@ -33,10 +34,11 @@ import {tabGroupsReducer} from '../components/tab/TabReducers';
 import {tableHeaderCellsReducer} from '../components/tables/TableHeaderCellReducers';
 import {tablesReducer} from '../components/tables/TableReducers';
 import {tableRowsReducer} from '../components/tables/TableRowReducers';
+import {textAreasReducer} from '../components/textarea/TextAreaReducers';
 import {toastsContainerReducer} from '../components/toast/ToastReducers';
 import {ITooltipProps} from '../components/tooltip/Tooltip';
 import {IReactVaporState} from '../ReactVapor';
-import {CommonActions} from './ReduxUtils';
+import {CommonActions, IReduxAction} from './ReduxUtils';
 
 export interface IReactVaporTestState extends IReactVaporState {
     lastAction?: Redux.Action;
@@ -94,6 +96,34 @@ export class TestUtils {
 
     static randomDate() {
         return new Date(+(new Date()) - Math.floor(Math.random() * 10000000000));
+    }
+
+    /**
+     * Hack to make sure the enzyme wrapper has been updated after a state or prop change.
+     *
+     * Because of the new version of enzyme (v3) wrappers are now immutable so we must call wrapper.update() after a change,
+     * but it doesn't seem to work as advertised. See https://github.com/airbnb/enzyme/issues/1153 and https://github.com/airbnb/enzyme/issues/1229
+     */
+    static buildRefreshFunction = (refresh: (wrapper: ReactWrapper<any, any>) => void) => (wrapper: ReactWrapper<any, any>, exec = noop) => {
+        exec();
+        wrapper.update();
+        refresh(wrapper);
+    }
+
+    /**
+     * Hack to safely dispatch an action while making sure the enzyme wrapper is refreshed afterward.
+     *
+     * Because of the new version of enzyme (v3) wrappers are now immutable so we must call wrapper.update() after a change,
+     * but it doesn't seem to work as advertised. See https://github.com/airbnb/enzyme/issues/1153 and https://github.com/airbnb/enzyme/issues/1229
+     */
+    static buildSafeDispatchFunction = (
+        store: Redux.Store<any>,
+        wrapper: ReactWrapper<any, any>,
+        refreshFunction: (wrapper: ReactWrapper<any, any>, exec?: () => void) => void,
+    ) => (action: IReduxAction<any>) => {
+        refreshFunction(wrapper, () => {
+            store.dispatch(action);
+        });
     }
 }
 

@@ -27,9 +27,9 @@ describe('<SideNavigationLoadingItem />', () => {
 
     it('should render a <SideNavigationLoadingItem /> with classes prop', () => {
         const className = 'mod-width-30';
-        const container = wrapper.find('div').first();
         wrapper.setProps({className});
-        wrapper.mount();
+        const container = wrapper.find('div').first();
+        wrapper.update();
         expect(container.hasClass(className)).toBe(true);
     });
 

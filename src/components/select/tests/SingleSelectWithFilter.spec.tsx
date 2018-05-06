@@ -2,7 +2,7 @@ import {mount, ReactWrapper} from 'enzyme';
 import * as React from 'react';
 import {Provider, Store} from 'react-redux';
 import {IReactVaporState} from '../../../ReactVapor';
-import {clearState} from '../../../utils/ReduxUtils';
+import {clearState, IReduxAction} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
 import {filterThrough} from '../../filterBox/FilterBoxActions';
 import {IItemBoxProps} from '../../itemBox/ItemBox';
@@ -15,8 +15,13 @@ describe('Select', () => {
         let wrapper: ReactWrapper<any, any>;
         let singleSelect: ReactWrapper<IMultiSelectProps, void>;
         let store: Store<IReactVaporState>;
+        let dispatchAction: (action: IReduxAction<any>) => void;
 
         const id: string = 'single-select-with-filter';
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+            singleSelect = reactWrapper.find(SelectConnected).first();
+        });
 
         const mountSingleSelect = (items: IItemBoxProps[] = [], matchFilter: (filterValue: string, item: IItemBoxProps) => boolean = undefined) => {
             wrapper = mount(
@@ -25,7 +30,8 @@ describe('Select', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            singleSelect = wrapper.find(SelectConnected).first();
+            dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+            refreshWrapperWhenDone(wrapper);
         };
 
         beforeEach(() => {
@@ -74,7 +80,7 @@ describe('Select', () => {
             ];
 
             mountSingleSelect(items);
-            store.dispatch(filterThrough(id, 'wontmatchanything'));
+            dispatchAction(filterThrough(id, 'wontmatchanything'));
 
             expect(singleSelect.props().items.length).toBe(items.length);
             singleSelect.find(SelectConnected).props().items
@@ -89,8 +95,8 @@ describe('Select', () => {
             ];
 
             mountSingleSelect(items);
-            store.dispatch(filterThrough(id, 'wontmatchanything'));
-            store.dispatch(filterThrough(id, ''));
+            dispatchAction(filterThrough(id, 'wontmatchanything'));
+            dispatchAction(filterThrough(id, ''));
 
             expect(singleSelect.props().items.length).toBe(items.length);
             expect(singleSelect.find(SelectConnected).props().items[0].hidden).toBe(true);
@@ -106,7 +112,7 @@ describe('Select', () => {
             ];
 
             mountSingleSelect(items, () => false);
-            store.dispatch(filterThrough(id, 'wontmatchanything'));
+            dispatchAction(filterThrough(id, 'wontmatchanything'));
 
             expect(singleSelect.props().items.length).toBe(items.length);
             singleSelect.find(SelectConnected).props().items

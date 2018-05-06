@@ -75,11 +75,12 @@ describe('Tab', () => {
         });
 
         it('should set active class on container when isActive is true', () => {
-            const container = tab.find('div').first();
+            let container = tab.find('div').first();
             expect(container.hasClass('active')).toBe(false);
 
             tab.setProps({id, title, isActive: true});
-            tab.mount();
+            tab.update();
+            container = tab.find('div').first();
             expect(container.hasClass('active')).toBe(true);
         });
     });

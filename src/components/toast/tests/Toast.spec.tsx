@@ -217,7 +217,7 @@ describe('Toasts', () => {
         it('should clear the timeout on mouseenter', () => {
             expect(onCloseToast).not.toHaveBeenCalled();
 
-            expect(toastComponent.hasClass('toast')).toBe(true);
+            expect(toastComponent.children().hasClass('toast')).toBe(true);
             toastComponent.simulate('mouseEnter');
             jasmine.clock().tick(dismissDelay);
 

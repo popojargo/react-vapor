@@ -58,27 +58,27 @@ describe('NavigationPerPageSelect', () => {
 
         it('should have "selectable" class if it is not selected', () => {
             const newNavigationPerPageSelectProps = _.extend({}, basicNavigationPerPageSelectProps, {selected: true});
-            const option = navigationPerPageSelect.find('.flat-select-option');
+            const option = () => navigationPerPageSelect.find('.flat-select-option');
 
-            expect(option.hasClass('selectable')).toBe(true);
+            expect(option().hasClass('selectable')).toBe(true);
 
             navigationPerPageSelect.setProps(newNavigationPerPageSelectProps);
 
-            expect(option.hasClass('selectable')).toBe(false);
+            expect(option().hasClass('selectable')).toBe(false);
         });
 
         it('should have "selected-value" "state-selected" classes when selected', () => {
             const newNavigationPerPageSelectProps = _.extend({}, basicNavigationPerPageSelectProps, {selected: true});
-            const option = navigationPerPageSelect.find('.flat-select-option');
-            const optionSpan = option.find('.enabled');
+            const option = () => navigationPerPageSelect.find('.flat-select-option');
+            const optionSpan = () => option().find('.enabled');
 
-            expect(optionSpan.hasClass('selected-value')).toBe(false);
-            expect(optionSpan.hasClass('state-selected')).toBe(false);
+            expect(optionSpan().hasClass('selected-value')).toBe(false);
+            expect(optionSpan().hasClass('state-selected')).toBe(false);
 
             navigationPerPageSelect.setProps(newNavigationPerPageSelectProps);
 
-            expect(optionSpan.hasClass('selected-value')).toBe(true);
-            expect(optionSpan.hasClass('state-selected')).toBe(true);
+            expect(optionSpan().hasClass('selected-value')).toBe(true);
+            expect(optionSpan().hasClass('state-selected')).toBe(true);
         });
 
         it('should call onPerPageClick when clicking link', () => {

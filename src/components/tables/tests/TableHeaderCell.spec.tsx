@@ -2,6 +2,8 @@ import {mount, ReactWrapper, shallow} from 'enzyme';
 // tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
 import * as _ from 'underscore';
+import {noop} from 'underscore';
+import {TestUtils} from '../../../utils/TestUtils';
 import {Svg} from '../../svg/Svg';
 import {TableSortingOrder} from '../TableConstants';
 import {ITableHeaderCellProps, TableHeaderCell} from '../TableHeaderCell';
@@ -145,27 +147,27 @@ describe('Tables', () => {
                 tableHeaderCell.setProps({sorted: TableSortingOrder.UNSORTED, attributeToSort: 'anyWouldDo'});
 
                 throwIfSvgNotPresent();
-                expect(tableHeaderCell.hasClass(sortDefaultClass)).toBe(true);
-                expect(tableHeaderCell.hasClass(sortAscendingClass)).toBe(false);
-                expect(tableHeaderCell.hasClass(sortDescendingClass)).toBe(false);
+                expect(tableHeaderCell.children().hasClass(sortDefaultClass)).toBe(true);
+                expect(tableHeaderCell.children().hasClass(sortAscendingClass)).toBe(false);
+                expect(tableHeaderCell.children().hasClass(sortDescendingClass)).toBe(false);
             });
 
             it('should have a sort icon in a sorted ascending state if it has sort in state ASCENDING', () => {
                 tableHeaderCell.setProps({sorted: TableSortingOrder.ASCENDING, attributeToSort: 'anyWouldDo'});
 
                 throwIfSvgNotPresent();
-                expect(tableHeaderCell.hasClass(sortDefaultClass)).toBe(true);
-                expect(tableHeaderCell.hasClass(sortAscendingClass)).toBe(true);
-                expect(tableHeaderCell.hasClass(sortDescendingClass)).toBe(false);
+                expect(tableHeaderCell.children().hasClass(sortDefaultClass)).toBe(true);
+                expect(tableHeaderCell.children().hasClass(sortAscendingClass)).toBe(true);
+                expect(tableHeaderCell.children().hasClass(sortDescendingClass)).toBe(false);
             });
 
             it('should have a sort icon in a sorted descending state if it has sort in state DESCENDING', () => {
                 tableHeaderCell.setProps({sorted: TableSortingOrder.DESCENDING, attributeToSort: 'anyWouldDo'});
 
                 throwIfSvgNotPresent();
-                expect(tableHeaderCell.hasClass(sortDefaultClass)).toBe(true);
-                expect(tableHeaderCell.hasClass(sortAscendingClass)).toBe(false);
-                expect(tableHeaderCell.hasClass(sortDescendingClass)).toBe(true);
+                expect(tableHeaderCell.children().hasClass(sortDefaultClass)).toBe(true);
+                expect(tableHeaderCell.children().hasClass(sortAscendingClass)).toBe(false);
+                expect(tableHeaderCell.children().hasClass(sortDescendingClass)).toBe(true);
             });
         });
     });

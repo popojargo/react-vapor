@@ -75,14 +75,14 @@ describe(' navigation', () => {
         });
 
         it('should pass on the currentPerPage prop if it is set (used without Redux)', () => {
-            const perPageNav: ReactWrapper<INavigationPerPageProps, any> = navigation.find(NavigationPerPage);
             const expectedPerPage: number = 33;
             const newNavigationProps: INavigationProps = _.extend({}, basicNavigationProps, {currentPerPage: expectedPerPage});
 
-            expect(perPageNav.props().currentPerPage).toBeUndefined();
+            expect(navigation.find(NavigationPerPage).props().currentPerPage).toBeUndefined();
 
             navigation.setProps(newNavigationProps);
-            expect(perPageNav.props().currentPerPage).toBe(expectedPerPage);
+            navigation.update();
+            expect(navigation.find(NavigationPerPage).props().currentPerPage).toBe(expectedPerPage);
         });
     });
 });

@@ -1,11 +1,10 @@
 import {mount, ReactWrapper} from 'enzyme';
-// tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
-import {Provider} from 'react-redux';
-import {Store} from 'react-redux';
+import {Provider, Store} from 'react-redux';
 import * as _ from 'underscore';
+
 import {IReactVaporState} from '../../../ReactVapor';
-import {clearState} from '../../../utils/ReduxUtils';
+import {clearState, IReduxAction} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
 import {IOptionPickerProps, OptionPicker} from '../OptionPicker';
 import {changeOptionPicker} from '../OptionPickerActions';
@@ -31,6 +30,11 @@ describe('Option picker', () => {
         let wrapper: ReactWrapper<any, any>;
         let optionPicker: ReactWrapper<IOptionPickerProps, any>;
         let store: Store<IReactVaporState>;
+        let dispatchAction: (action: IReduxAction<any>) => void;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+            optionPicker = reactWrapper.find(OptionPicker).first();
+        });
 
         beforeEach(() => {
             store = TestUtils.buildStore();
@@ -41,7 +45,8 @@ describe('Option picker', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            optionPicker = wrapper.find(OptionPicker).first();
+            dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -93,7 +98,7 @@ describe('Option picker', () => {
             const expectedSelectedValue: string = 'our value';
             const expectedSelectedLabel: string = 'our label';
 
-            store.dispatch(changeOptionPicker(OPTION_PICKER_BASIC_PROPS.id, expectedSelectedLabel, expectedSelectedValue));
+            dispatchAction(changeOptionPicker(OPTION_PICKER_BASIC_PROPS.id, expectedSelectedLabel, expectedSelectedValue));
 
             expect(optionPicker.props().activeLabel).toBe(expectedSelectedLabel);
         });

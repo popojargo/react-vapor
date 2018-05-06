@@ -1,6 +1,7 @@
 import {mount, ReactWrapper} from 'enzyme';
 import * as React from 'react';
 import {Provider, Store} from 'react-redux';
+
 import {IReactVaporState} from '../../../ReactVapor';
 import {clearState} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
@@ -28,6 +29,10 @@ describe('Select', () => {
             return predicate === defaultFlatSelectOptions[0].id;
         };
 
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+            multiSelect = reactWrapper.find(SelectConnected).first();
+        });
+
         const mountMultiSelect = (items: IItemBoxProps[] = [], options: IFlatSelectOptionProps[] = defaultFlatSelectOptions) => {
             wrapper = mount(
                 <Provider store={store}>
@@ -35,7 +40,8 @@ describe('Select', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            multiSelect = wrapper.find(SelectConnected).first();
+
+            refreshWrapperWhenDone(wrapper);
         };
 
         beforeEach(() => {
@@ -84,7 +90,7 @@ describe('Select', () => {
             ];
 
             mountMultiSelect(items);
-            store.dispatch(selectFlatSelect(id, defaultFlatSelectOptions[1].id));
+            refreshWrapperWhenDone(wrapper, () => store.dispatch(selectFlatSelect(id, defaultFlatSelectOptions[1].id)));
 
             expect(multiSelect.props().items.length).toBe(items.length);
             multiSelect.find(SelectConnected).props().items
@@ -99,7 +105,7 @@ describe('Select', () => {
             ];
 
             mountMultiSelect(items);
-            store.dispatch(selectFlatSelect(id, defaultFlatSelectOptions[0].id));
+            refreshWrapperWhenDone(wrapper, () => store.dispatch(selectFlatSelect(id, defaultFlatSelectOptions[0].id)));
 
             expect(multiSelect.props().items.length).toBe(items.length);
             expect(multiSelect.find(SelectConnected).props().items[0].hidden).toBe(true);

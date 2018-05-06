@@ -1,8 +1,8 @@
 import {HTMLAttributes, mount, ReactWrapper, shallow} from 'enzyme';
 import * as React from 'react';
-import {Provider} from 'react-redux';
-import {Store} from 'react-redux';
+import {Provider, Store} from 'react-redux';
 import {findWhere} from 'underscore';
+
 import {IReactVaporState} from '../../ReactVapor';
 import {clearState} from '../../utils/ReduxUtils';
 import {TestUtils} from '../../utils/TestUtils';
@@ -24,13 +24,17 @@ describe('TextArea', () => {
         let wrapper: ReactWrapper<ITextAreaProps, any>;
         let textArea: ReactWrapper<HTMLAttributes, any>;
 
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            textArea = wrapper.find('textarea').first();
+        });
+
         beforeEach(() => {
             wrapper = mount(
                 <TextArea id='textarea-id' />,
                 {attachTo: document.getElementById('App')},
             );
 
-            textArea = wrapper.find('textarea').first();
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -46,25 +50,32 @@ describe('TextArea', () => {
             const className = 'a-class';
             expect(textArea.hasClass(className)).toBe(false);
 
-            wrapper.setProps({className});
+            refreshWrapperWhenDone(wrapper, () => wrapper.setProps({className}));
+
             expect(textArea.hasClass(className)).toBe(true);
         });
 
         it('should set additionalAttributes when specified', () => {
             expect(textArea.prop('placeholder')).toBeUndefined();
-            wrapper.setProps({additionalAttributes: {placeholder: 'not null'}});
+
+            refreshWrapperWhenDone(wrapper, () => wrapper.setProps({additionalAttributes: {placeholder: 'not null'}}));
+
             expect(textArea.prop('placeholder')).toBe('not null');
         });
 
         it('should set disabled prop when specified', () => {
             expect(textArea.prop('disabled')).toBeUndefined();
-            wrapper.setProps({disabled: true});
+
+            refreshWrapperWhenDone(wrapper, () => wrapper.setProps({disabled: true}));
+
             expect(textArea.prop('disabled')).toBe(true);
         });
 
         it('should set value prop when specified', () => {
             expect(textArea.prop('value')).toBeUndefined();
-            wrapper.setProps({value: 'non empty'});
+
+            refreshWrapperWhenDone(wrapper, () => wrapper.setProps({value: 'non empty'}));
+
             expect(textArea.prop('value')).toBe('non empty');
         });
 

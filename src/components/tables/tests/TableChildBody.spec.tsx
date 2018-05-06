@@ -60,7 +60,8 @@ describe('<TableChildBody />', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            return wrapper.find(TableChildBody);
+            wrapper.update();
+            return wrapper.find(TableChildBody).children();
         };
 
         it('should render without error', () => {
@@ -143,17 +144,17 @@ describe('<TableChildBody />', () => {
 
         it('should send not send disabled as a class to the <TableHeadingRow /> if the enabled property is set to true on the row data', () => {
             const newProps: ITableChildBodyProps = _.extend({}, tableChildBodyProps, {rowData: _.extend({}, tableChildBodyProps.rowData, {enabled: true})});
-            expect(mountComponentWithProps(newProps).find('.disabled').length).toBe(0);
+            expect(mountComponentWithProps(newProps).find('tr.disabled').length).toBe(0);
         });
 
         it('should send send disabled as a class to the <TableHeadingRow /> if the enabled property is set to false on the row data', () => {
             const newProps: ITableChildBodyProps = _.extend({}, tableChildBodyProps, {rowData: _.extend({}, tableChildBodyProps.rowData, {enabled: false})});
-            expect(mountComponentWithProps(newProps).find('.disabled').length).toBe(1);
+            expect(mountComponentWithProps(newProps).find('tr.disabled').length).toBe(1);
         });
 
         it('should send send disabled as a class to the <TableHeadingRow /> if the disabled property is set to true on the row data', () => {
             const newProps: ITableChildBodyProps = _.extend({}, tableChildBodyProps, {rowData: _.extend({}, tableChildBodyProps.rowData, {disabled: true})});
-            expect(mountComponentWithProps(newProps).find('.disabled').length).toBe(1);
+            expect(mountComponentWithProps(newProps).find('tr.disabled').length).toBe(1);
         });
     });
 });

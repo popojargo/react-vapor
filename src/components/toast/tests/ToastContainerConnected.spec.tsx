@@ -3,7 +3,9 @@ import {mount, ReactWrapper} from 'enzyme';
 import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux';
+
 import {IReactVaporState} from '../../../ReactVapor';
+import {IReduxAction} from '../../../utils/ReduxUtils';
 import {TestUtils} from '../../../utils/TestUtils';
 import {Toast, ToastType} from '../Toast';
 import {addToast} from '../ToastActions';
@@ -16,6 +18,11 @@ describe('Toasts', () => {
         let component: ReactWrapper<IToastContainerProps, void>;
         let store: Store<IReactVaporState>;
         const containerId = 'toast-container-id';
+        let dispatchAction: (action: IReduxAction<any>) => void;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            component = wrapper.find(ToastContainer);
+        });
 
         beforeEach(() => {
             store = TestUtils.buildStore();
@@ -26,7 +33,9 @@ describe('Toasts', () => {
                 </Provider>,
                 {attachTo: document.getElementById('App')},
             );
-            component = wrapper.find(ToastContainer);
+
+            dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+            refreshWrapperWhenDone(wrapper);
         });
 
         afterEach(() => {
@@ -58,17 +67,18 @@ describe('Toasts', () => {
             expect(component.props().toasts.length).toBe(0);
             expect(component.find(Toast).length).toBe(0);
 
-            store.dispatch(addToast(containerId, 'toast title', {type: ToastType.Error}));
+            dispatchAction(addToast(containerId, 'toast title', {type: ToastType.Error}));
 
             expect(component.props().toasts.length).toBe(1);
             expect(component.find(Toast).length).toBe(1);
         });
 
         it('should call onCloseToast when the user close a Toast', () => {
-            store.dispatch(addToast(containerId, 'toast title'));
+            dispatchAction(addToast(containerId, 'toast title'));
 
             const toast = component.find(Toast).first();
-            toast.props().onClose();
+
+            refreshWrapperWhenDone(wrapper, () => toast.props().onClose());
 
             expect(component.props().toasts.length).toBe(0);
             expect(component.find(Toast).length).toBe(0);

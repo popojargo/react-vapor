@@ -5,7 +5,7 @@ import {Provider} from 'react-redux';
 import {Store} from 'redux';
 import * as _ from 'underscore';
 import {IReactVaporState} from '../../../../ReactVapor';
-import {clearState} from '../../../../utils/ReduxUtils';
+import {clearState, IReduxAction} from '../../../../utils/ReduxUtils';
 import {TestUtils} from '../../../../utils/TestUtils';
 import {addLoading, turnOffLoading} from '../../../loading/LoadingActions';
 import {addPagination, changePage} from '../../pagination/NavigationPaginationActions';
@@ -18,27 +18,39 @@ describe('<NavigationPerPageConnected />', () => {
     let wrapper: ReactWrapper<any, any>;
     let navigationPerPage: ReactWrapper<INavigationPerPageProps, any>;
     let store: Store<IReactVaporState>;
+    let dispatchAction: (action: IReduxAction<any>) => void;
+    const ID = 'navigation-per-page';
+    const loadingId: string = `${ID}-loading`;
     const basicNavigationPerPageProps: INavigationPerPageProps = {
         totalEntries: 55,
-        id: 'navigation-per-page',
+        id: ID,
+        loadingIds: [loadingId]
     };
-    const loadingId: string = basicNavigationPerPageProps.id + '-loading';
-    basicNavigationPerPageProps.loadingIds = [loadingId];
 
-    beforeEach(() => {
-        store = TestUtils.buildStore();
+    const refreshWrapperWhenDone = TestUtils.buildRefreshFunction((reactWrapper) => {
+        navigationPerPage = reactWrapper.find(NavigationPerPage).first();
+    });
+
+    const mountWithProps = (props?) => {
         store.dispatch(addLoading(loadingId));
         store.dispatch(turnOffLoading([loadingId]));
-
+        
         wrapper = mount(
             <Provider store={store}>
                 <div>
-                    <NavigationPerPageConnected {...basicNavigationPerPageProps} />
+                    <NavigationPerPageConnected {..._.extend({}, basicNavigationPerPageProps, props)} />
                 </div>
             </Provider>,
             {attachTo: document.getElementById('App')},
         );
-        navigationPerPage = wrapper.find(NavigationPerPage).first();
+        
+        dispatchAction = TestUtils.buildSafeDispatchFunction(store, wrapper, refreshWrapperWhenDone);
+        refreshWrapperWhenDone(wrapper);
+    };
+    
+    beforeEach(() => {
+        store = TestUtils.buildStore();
+        mountWithProps();
     });
 
     afterEach(() => {
@@ -48,35 +60,27 @@ describe('<NavigationPerPageConnected />', () => {
     });
 
     it('should get the current perPageNumber as a prop', () => {
-        let currentPerPageProp = navigationPerPage.props().currentPerPage;
+        const currentPerPageProp = () => navigationPerPage.props().currentPerPage;
 
-        expect(currentPerPageProp).toBeDefined();
-        expect(currentPerPageProp).toBe(10);
+        expect(currentPerPageProp()).toBeDefined();
+        expect(currentPerPageProp()).toBe(10);
 
-        store.dispatch(changePerPage(basicNavigationPerPageProps.id, 20));
+        dispatchAction(changePerPage(ID, 20));
 
-        currentPerPageProp = navigationPerPage.props().currentPerPage;
-        expect(currentPerPageProp).toBe(20);
+        expect(currentPerPageProp()).toBe(20);
 
-        store.dispatch(clearState());
+        dispatchAction(clearState());
 
-        currentPerPageProp = navigationPerPage.props().currentPerPage;
-        expect(currentPerPageProp).toBe(PER_PAGE_NUMBERS[0]);
+        expect(currentPerPageProp()).toBe(PER_PAGE_NUMBERS[0]);
 
-        const perPageNumber: number[] = [11, 22, 33];
-        wrapper = mount(
-            <Provider store={store}>
-                <div>
-                    <NavigationPerPageConnected {...basicNavigationPerPageProps} perPageNumbers={perPageNumber} />
-                </div>
-            </Provider>,
-            {attachTo: document.getElementById('App')},
-        );
-        navigationPerPage = wrapper.find(NavigationPerPage).first();
-        store.dispatch(clearState());
+        const perPageNumbers: number[] = [11, 22, 33];
 
-        currentPerPageProp = navigationPerPage.props().currentPerPage;
-        expect(currentPerPageProp).toBe(perPageNumber[0]);
+        wrapper.unmount();
+        mountWithProps({perPageNumbers});
+
+        dispatchAction(clearState());
+
+        expect(currentPerPageProp()).toBe(perPageNumbers[0]);
     });
 
     it('should get what to do onRender as a prop', () => {

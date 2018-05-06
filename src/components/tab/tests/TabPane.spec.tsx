@@ -1,6 +1,7 @@
-import {mount, ReactWrapper, shallow} from 'enzyme';
+import {HTMLAttributes, mount, ReactWrapper, shallow} from 'enzyme';
 // tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
+import {TestUtils} from '../../../utils/TestUtils';
 import {ITabPaneProps, TabPane} from '../TabPane';
 
 describe('TabPane', () => {
@@ -20,6 +21,11 @@ describe('TabPane', () => {
 
     describe('<Tab />', () => {
         let tab: ReactWrapper<ITabPaneProps, any>;
+        let container: ReactWrapper<HTMLAttributes, any>;
+
+        const refreshWrapperWhenDone = TestUtils.buildRefreshFunction(() => {
+            container = tab.find('div').first();
+        });
 
         beforeEach(() => {
             tab = mount(
@@ -28,6 +34,7 @@ describe('TabPane', () => {
                 />,
                 {attachTo: document.getElementById('App')},
             );
+            refreshWrapperWhenDone(tab);
         });
 
         afterEach(() => {
@@ -36,17 +43,16 @@ describe('TabPane', () => {
         });
 
         it('should set active class on container when isActive is true', () => {
-            const container = tab.find('div').first();
             expect(container.hasClass('active')).toBe(false);
 
-            tab.setProps({id, isActive: true});
-            tab.mount();
+            refreshWrapperWhenDone(tab, () => tab.setProps({id, isActive: true}));
+
             expect(container.hasClass('active')).toBe(true);
         });
 
         it('should add classNames when className prop set', () => {
-            const container = tab.find('div').first();
-            tab.setProps({id, className: 'hello'}).mount();
+            refreshWrapperWhenDone(tab, () => tab.setProps({id, className: 'hello'}));
+
             expect(container.hasClass('hello')).toBe(true);
         });
     });

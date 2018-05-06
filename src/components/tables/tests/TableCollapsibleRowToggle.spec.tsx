@@ -1,8 +1,9 @@
 import {mount, ReactWrapper, shallow} from 'enzyme';
-// tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
+
 import {ITableCollapsibleRowToggleProps, TableCollapsibleRowToggle} from '../TableCollapsibleRowToggle';
 
+// tslint:disable-next-line:no-unused-variable
 describe('Tables', () => {
 
     describe('<TableCollapsibleRowToggle />', () => {
@@ -28,6 +29,7 @@ describe('Tables', () => {
                 <TableCollapsibleRowToggle isExpanded={isExpanded} />,
                 {attachTo: document.getElementById('AppTableBodyRow')},
             );
+            tableCollapsibleRowToggle.update();
         });
 
         afterEach(() => {
@@ -43,14 +45,14 @@ describe('Tables', () => {
         });
 
         it('should have a svg with state-collapsed if collapsed', () => {
-            expect(tableCollapsibleRowToggle.find('.state-collapsed').length).toBe(1);
-            expect(tableCollapsibleRowToggle.find('.state-expanded').length).toBe(0);
+            expect(tableCollapsibleRowToggle.find('.state-collapsed').children().length).toBe(1);
+            expect(tableCollapsibleRowToggle.find('.state-expanded').children().length).toBe(0);
         });
 
         it('should have a svg with state-expanded if expanded', () => {
             tableCollapsibleRowToggle.setProps({isExpanded: true});
-            expect(tableCollapsibleRowToggle.find('.state-expanded').length).toBe(1);
-            expect(tableCollapsibleRowToggle.find('.state-collapsed').length).toBe(0);
+            expect(tableCollapsibleRowToggle.find('.state-expanded').children().length).toBe(1);
+            expect(tableCollapsibleRowToggle.find('.state-collapsed').children().length).toBe(0);
         });
     });
 });

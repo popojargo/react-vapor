@@ -27,9 +27,9 @@ describe('<SideNavigation />', () => {
 
     it('should render a <SideNavigation /> with classes prop', () => {
         const className = 'foo';
-        const container = wrapper.find('nav').first();
         wrapper.setProps({className});
-        wrapper.mount();
+        wrapper.update();
+        const container = wrapper.find('nav').first();
         expect(container.hasClass(className)).toBe(true);
     });
 });
