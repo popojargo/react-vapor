@@ -1,5 +1,6 @@
 import {mount, ReactWrapper, shallow} from 'enzyme';
 import * as React from 'react';
+import {keyCode} from '../../../utils/InputUtils';
 import {IModalBackdropProps, ModalBackdrop} from '../ModalBackdrop';
 
 describe('ModalBackdrop', () => {
@@ -47,6 +48,19 @@ describe('ModalBackdrop', () => {
             expect(container.hasClass('closed')).toBe(false);
         });
 
+        it('should set the proper layer class when display prop is true', () => {
+            const container = modalBackdrop.find('div').first();
+            expect(container.hasClass('layer-1')).toBe(false);
+
+            modalBackdrop.setProps({display: true});
+            modalBackdrop.mount();
+            expect(container.hasClass('layer-1')).toBe(true);
+
+            modalBackdrop.setProps({display: true, layer: 2});
+            modalBackdrop.mount();
+            expect(container.hasClass('layer-2')).toBe(true);
+        });
+
         it('should set "prompt-backdrop" class when isPrompt prop is passed', () => {
             const container = modalBackdrop.find('div').first();
             expect(container.hasClass('prompt-backdrop')).toBe(false);
@@ -76,7 +90,7 @@ describe('ModalBackdrop', () => {
             jasmine.clock().tick(5);
 
             const event = document.createEvent('Event');
-            (event as any).key = 'Escape';
+            (event as any).keyCode = keyCode.escape;
             event.initEvent('keydown', true, true);
             document.dispatchEvent(event);
 
@@ -88,7 +102,7 @@ describe('ModalBackdrop', () => {
             const handleClickSpy = spyOn<any>(modalBackdrop.instance(), 'handleClick');
 
             const event = document.createEvent('Event');
-            (event as any).key = 'Escape';
+            (event as any).keyCode = keyCode.escape;
             event.initEvent('keydown', true, true);
             document.dispatchEvent(event);
 
@@ -99,7 +113,7 @@ describe('ModalBackdrop', () => {
             const handleClickSpy = spyOn<any>(modalBackdrop.instance(), 'handleClick');
 
             const event = document.createEvent('Event');
-            (event as any).key = 'j';
+            (event as any).keyCode = keyCode.ctrl;
             event.initEvent('keydown', true, true);
             document.dispatchEvent(event);
 

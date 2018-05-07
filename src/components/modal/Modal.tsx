@@ -6,6 +6,8 @@ export interface IModalOwnProps {
     id?: string;
     classes?: IClassName;
     closeCallback?: () => void;
+    closeTimeout?: number;
+    layer?: number;
 }
 
 export interface IModalStateProps {
@@ -21,6 +23,10 @@ export interface IModalProps extends IModalOwnProps, IModalStateProps, IModalDis
 
 export class Modal extends React.Component<IModalProps, {}> {
 
+    static defaultProps: Partial<IModalProps> = {
+        layer: 1,
+    };
+
     componentWillMount() {
         if (this.props.onRender) {
             this.props.onRender();
@@ -28,8 +34,8 @@ export class Modal extends React.Component<IModalProps, {}> {
     }
 
     componentWillUnmount() {
-        if (this.props.closeCallback && this.props.isOpened) {
-            this.props.closeCallback();
+        if (this.props.isOpened) {
+            this.closeModal();
         }
         if (this.props.onDestroy) {
             this.props.onDestroy();
@@ -37,15 +43,30 @@ export class Modal extends React.Component<IModalProps, {}> {
     }
 
     componentWillReceiveProps(nextProps: IModalProps) {
-        if (this.props.isOpened && !nextProps.isOpened && this.props.closeCallback) {
-            this.props.closeCallback();
+        if (this.props.isOpened && !nextProps.isOpened) {
+            this.closeModal();
+        }
+    }
+
+    private closeModal() {
+        if (this.props.closeCallback) {
+            if (this.props.closeTimeout) {
+                setTimeout(() => this.props.closeCallback(), this.props.closeTimeout);
+            } else {
+                this.props.closeCallback();
+            }
         }
     }
 
     render() {
-        const classes = classNames('modal-container', this.props.classes, {
-            'opened': this.props.isOpened,
-        });
+        const classes = classNames(
+            'modal-container',
+            this.props.classes,
+            {
+                'opened': this.props.isOpened,
+                [`layer-${this.props.layer}`]: this.props.isOpened,
+            },
+        );
 
         return (
             <div className={classes}>
