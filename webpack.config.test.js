@@ -31,12 +31,13 @@ module.exports = {
                     loader: 'ts-loader',
                     options: {
                         configFile: 'tsconfig.test.json',
+                        compiler: 'ttypescript',
                     },
                 },
             },
             {
                 enforce: 'post',
-                test: /src\/(?:(?!Examples)(?!spec)(?!tests)(?!Utils).)*\.(?!css).+$/i,
+                test: /src\/(?:(?!Examples|spec|tests|Utils).)*\.(?!css|spec).+$/i,
                 exclude: /(node_modules)/,
                 loader: 'istanbul-instrumenter-loader',
             },
