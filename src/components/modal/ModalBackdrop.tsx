@@ -3,8 +3,9 @@ import * as React from 'react';
 import * as _ from 'underscore';
 
 import {keyCode} from '../../utils/InputUtils';
+import {IModalDirtyPossibleProps} from './ModalDirtyConnected';
 
-export interface IModalBackdropOwnProps {
+export interface IModalBackdropOwnProps extends IModalDirtyPossibleProps {
     displayFor?: string[];
     isPrompt?: boolean;
 }

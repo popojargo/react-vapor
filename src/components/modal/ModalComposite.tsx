@@ -21,7 +21,9 @@ export interface IModalCompositeOwnProps extends IModalProps, IModalHeaderProps,
     isPrompt?: boolean;
 }
 
-export interface IModalCompositeStateProps extends IReduxStatePossibleProps {}
+export interface IModalCompositeStateProps extends IReduxStatePossibleProps {
+    isDirty?: boolean;
+}
 
 export interface IModalCompositeDispatchProps {}
 
@@ -69,6 +71,8 @@ export class ModalComposite extends React.Component<IModalCompositeProps> {
             title: this.props.title,
             classes: this.props.modalHeaderClasses,
             docLink: this.props.docLink,
+            isDirty: this.props.isDirty,
+            modalDirtyId: this.props.modalDirtyId,
         };
         const onCloseProp = this.props.onClose ? () => this.props.onClose() : undefined;
 
@@ -93,6 +97,8 @@ export class ModalComposite extends React.Component<IModalCompositeProps> {
         const basicProps: IModalBackdropProps = {
             displayFor: [this.props.id],
             isPrompt: this.props.isPrompt,
+            isDirty: this.props.isDirty,
+            modalDirtyId: this.props.modalDirtyId,
         };
 
         const onClickProp = () => {

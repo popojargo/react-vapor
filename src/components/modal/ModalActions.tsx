@@ -4,10 +4,12 @@ export interface IModalActionPayload {
     id?: string;
     ids?: string[];
     isOpened?: boolean;
+    isDirty?: boolean;
 }
 
 export const ModalAction = {
     openModal: 'OPEN_MODAL',
+    setDirtyModal: 'SET_DIRTY_MODAL',
     addModal: 'ADD_MODAL',
     removeModal: 'REMOVE_MODAL',
     closeModals: 'CLOSE_MODALS',
@@ -24,6 +26,14 @@ export const openModal = (id: string): IReduxAction<IModalActionPayload> => ({
     type: ModalAction.openModal,
     payload: {
         id,
+    },
+});
+
+export const setDirtyModal = (id: string, isDirty: boolean): IReduxAction<IModalActionPayload> => ({
+    type: ModalAction.setDirtyModal,
+    payload: {
+        id,
+        isDirty,
     },
 });
 

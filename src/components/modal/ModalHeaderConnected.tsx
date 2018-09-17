@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import * as _ from 'underscore';
 import {IReactVaporState} from '../../ReactVapor';
 import {IDispatch, ReduxUtils} from '../../utils/ReduxUtils';
-import {closeModal} from './ModalActions';
+import {closeModal, openModal} from './ModalActions';
 import {
     IModalHeaderDispatchProps,
     IModalHeaderOwnProps,
@@ -20,7 +20,13 @@ const mapStateToProps = (state: IReactVaporState, ownProps: IModalHeaderOwnProps
 };
 
 const mapDispatchToProps = (dispatch: IDispatch, ownProps: IModalHeaderOwnProps): IModalHeaderDispatchProps => ({
-    onClose: () => dispatch(closeModal(ownProps.id)),
+    onClose: () => {
+        if (ownProps.modalDirtyId && ownProps.isDirty) {
+            dispatch(openModal(ownProps.modalDirtyId));
+        } else {
+            dispatch(closeModal(ownProps.id));
+        }
+    },
 });
 
 export const ModalHeaderConnected: React.ComponentClass<IModalHeaderProps> = connect(mapStateToProps, mapDispatchToProps, ReduxUtils.mergeProps)(ModalHeader);

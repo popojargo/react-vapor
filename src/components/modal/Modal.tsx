@@ -1,8 +1,9 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {IClassName} from '../../utils/ClassNameUtils';
+import {IModalDirtyPossibleProps} from './ModalDirtyConnected';
 
-export interface IModalOwnProps {
+export interface IModalOwnProps extends IModalDirtyPossibleProps {
     id?: string;
     classes?: IClassName;
     closeCallback?: () => void;

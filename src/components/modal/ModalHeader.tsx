@@ -5,8 +5,9 @@ import {IClassName} from '../../utils/ClassNameUtils';
 import {TooltipPlacement} from '../../utils/TooltipUtils';
 import {Svg} from '../svg/Svg';
 import {Tooltip} from '../tooltip/Tooltip';
+import {IModalDirtyPossibleProps} from './ModalDirtyConnected';
 
-export interface IModalHeaderOwnProps {
+export interface IModalHeaderOwnProps extends IModalDirtyPossibleProps {
     id?: string;
     title: string;
     classes?: IClassName;

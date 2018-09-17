@@ -5,9 +5,10 @@ import {IModalActionPayload, ModalAction} from './ModalActions';
 export interface IModalState {
     id: string;
     isOpened: boolean;
+    isDirty?: boolean;
 }
 
-export const modalInitialState: IModalState = {id: undefined, isOpened: false};
+export const modalInitialState: IModalState = {id: undefined, isOpened: false, isDirty: false};
 export const modalsInitialState: IModalState[] = [];
 
 export const modalReducer = (
@@ -33,8 +34,16 @@ export const modalReducer = (
                 : {
                     ...state,
                     isOpened: false,
+                    isDirty: false,
                 };
 
+        case ModalAction.setDirtyModal:
+            return state.id !== action.payload.id
+                ? state
+                : {
+                    ...state,
+                    isDirty: true,
+                };
         default:
             return state;
     }
@@ -56,6 +65,7 @@ export const modalsReducer = (
             });
         case ModalAction.closeModals:
         case ModalAction.openModal:
+        case ModalAction.setDirtyModal:
             return state.map((modal: IModalState) => modalReducer(modal, action));
         default:
             return state;
