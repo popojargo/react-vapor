@@ -17,7 +17,7 @@ const mapStateToProps = (
 ): IToastContainerStateProps => {
     const container = _.findWhere(state.toastContainers, {id: ownProps.id}) || {id: null, toasts: []};
     return {
-        toasts: container.toasts,
+        toasts: container && container.toasts || [],
     };
 };
 
