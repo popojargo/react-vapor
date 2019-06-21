@@ -81,6 +81,7 @@ import {OptionsCycleExamples} from '../src/components/optionsCycle/examples/Opti
 import {PartialStringMatchExamples} from '../src/components/partial-string-match/PartialStringMatchExamples';
 import {PopoverConnectedExamples} from '../src/components/popover/examples/PopoverConnectedExamples';
 import {RadioExamples} from '../src/components/radio/examples/RadioExamples';
+import {RichPopoverExamples} from '../src/components/rich-popover/examples/RichPopoverExamples';
 import {SearchBarExamples} from '../src/components/searchBar/SearchBarExamples';
 import {MultiSelectExamples} from '../src/components/select/examples/MultiSelectExamples';
 import {SingleSelectExamples} from '../src/components/select/examples/SingleSelectExamples';
@@ -279,6 +280,7 @@ class App extends React.PureComponent<{}, AppState> {
         {component: DropExamples, componentName: 'Drop'},
         {component: DropWithDropdownExamples, componentName: 'DropWithDropdown'},
         {component: ChartExamples, componentName: 'Charts'},
+        {component: RichPopoverExamples, componentName: 'RichPopover'},
     ];
 
     constructor(props: {}, state: AppState) {
@@ -325,7 +327,7 @@ class App extends React.PureComponent<{}, AppState> {
                             onClickItem={this.activateItem}
                         />
                     </div>
-                    <div className="flex-auto mod-header-padding mt2 overflow-auto">
+                    <div className="flex-auto mod-header-padding my2 overflow-auto">
                         {this.state.activeComponentId &&
                             React.createElement(this.getSelectedComponent(this.state.activeComponentId))}
                     </div>
